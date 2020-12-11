@@ -1,0 +1,6 @@
+include ':libnetwork'
+include ':libcommon'
+include ':libcompiler'
+include ':libnavannotation'
+include ':app'
+rootProject.name = "JetPackBestPractice"
