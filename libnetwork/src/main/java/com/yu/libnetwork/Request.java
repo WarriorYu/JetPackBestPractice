@@ -1,10 +1,13 @@
 package com.yu.libnetwork;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.arch.core.executor.ArchTaskExecutor;
 
 import com.yu.libnetwork.cache.CacheManager;
@@ -32,7 +35,7 @@ import okhttp3.Response;
  * @date :   2020/12/10
  * Describe :
  */
-public abstract class Request<T, R> {
+public abstract class Request<T, R extends Request> implements Cloneable {
     protected String mUrl;
     protected HashMap<String, String> headers = new HashMap<>();
     protected HashMap<String, Object> params = new HashMap<>();
@@ -242,5 +245,11 @@ public abstract class Request<T, R> {
         result.message = message;
 
         return result;
+    }
+
+    @NonNull
+    @Override
+    public Request clone() throws CloneNotSupportedException {
+        return (Request<T, R>) super.clone();
     }
 }

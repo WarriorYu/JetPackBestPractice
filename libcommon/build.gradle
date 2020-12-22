@@ -49,4 +49,9 @@ dependencies {
 
     //包含了 viewmodel 和 livedata
     api 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+
+    //图片加载
+    api 'com.github.bumptech.glide:glide:4.9.0'
+    api 'jp.wasabeef:glide-transformations:4.0.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }

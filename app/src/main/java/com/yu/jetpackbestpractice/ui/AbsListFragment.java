@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.yu.jetpackbestpractice.R;
@@ -40,7 +42,7 @@ public abstract class AbsListFragment<T, M extends AbsViewModel<T>> extends Frag
     protected SmartRefreshLayout mRefreshLayout;
     protected PagedListAdapter adapter;
     protected RecyclerView mRecyclerView;
-    protected ViewModel mViewModel;
+    protected M mViewModel;
 
     @Nullable
     @Override
@@ -89,13 +91,38 @@ public abstract class AbsListFragment<T, M extends AbsViewModel<T>> extends Frag
         if (arguments.length > 1) {
             Type argument = arguments[1];
             Class modelClaz = ((Class) argument).asSubclass(AbsViewModel.class);
-            mViewModel = ViewModelProviders.of(this).get(modelClaz);
+            mViewModel = (M) ViewModelProviders.of(this).get(modelClaz);
 
             //触发页面初始化数据加载的逻辑
 
 
         }
+    }
 
+    public void submitList(PagedList<T> result) {
+        //只有当新数据集合大于0 的时候，才调用adapter.submitList
+        //否则可能会出现 页面----有数据----->被清空-----空布局
+        if (result.size() > 0) {
+            adapter.submitList(result);
+        }
+        finishRefresh(result.size() > 0);
+    }
+
+    public void finishRefresh(boolean hasData) {
+        PagedList<T> currentList = adapter.getCurrentList();
+        hasData = hasData || currentList != null && currentList.size() > 0;
+        RefreshState state = mRefreshLayout.getState();
+        if (state.isFooter && state.isOpening) {
+            mRefreshLayout.finishLoadMore();
+        } else if (state.isHeader && state.isOpening) {
+            mRefreshLayout.finishRefresh();
+        }
+
+        if (hasData) {
+            mEmptyView.setVisibility(View.GONE);
+        }else{
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
     }
 
     /**

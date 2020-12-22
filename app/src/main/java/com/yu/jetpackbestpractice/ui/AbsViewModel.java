@@ -15,7 +15,7 @@ import androidx.paging.PagedList;
  */
 public abstract class AbsViewModel<T> extends ViewModel {
 
-    private final PagedList.Config mConfig;
+    protected final PagedList.Config mConfig;
     private DataSource dataSource;
     private final LiveData mPageData;
     private MutableLiveData<Boolean> mBoundaryPageData = new MutableLiveData<>();
